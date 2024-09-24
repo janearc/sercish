@@ -1,2 +1,2 @@
 # sercish
-slack integrations for the sercish slack
+don't blame me, blame the robot
