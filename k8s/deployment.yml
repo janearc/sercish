@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: archeavy-bitey-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bitey
+  template:
+    metadata:
+      labels:
+        app: bitey
+    spec:
+      containers:
+        - name: archeavy-bitey
+          image: 620055013658.dkr.ecr.us-west-2.amazonaws.com/archeavy/bitey:latest
+          ports:
+            - containerPort: 8080

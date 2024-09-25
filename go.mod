@@ -1,10 +1,11 @@
 module sercish
 
-go 1.23.1
+go 1.23
 
 require (
 	github.com/sirupsen/logrus v1.9.3
 	github.com/slack-go/slack v0.14.0
+	gopkg.in/yaml.v3 v3.0.0-20200313102051-9f266ea9e77c
 )
 
 require (

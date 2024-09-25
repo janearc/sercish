@@ -3,4 +3,6 @@ slack:
   client_id: "7759248758566.7764056196327"
 noaa:
   api_url: "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter"
-	station_id: "9414290"
+  station_id: "9414290"
+web:
+  port: 80

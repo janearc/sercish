@@ -25,9 +25,7 @@ FROM alpine:latest
 ENV APP_ROOT=/app
 
 # Copy the built Go binary from the builder image
-COPY --from=builder /app/archeavy .
-COPY --from=builder /app/public /app/public
-COPY --from=builder /app/views /app/views
+COPY --from=builder /app .
 
 # Expose the application's port
 EXPOSE 8080

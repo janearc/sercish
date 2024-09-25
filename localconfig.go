@@ -22,6 +22,9 @@ type Config struct {
 		apiURL    string `yaml:"api_url"`
 		stationID string `yaml:"station_id"`
 	}
+	Web struct {
+		Port int `yaml:"port"`
+	}
 }
 
 // let's just do some accessors because accessors are cool
