@@ -1,4 +1,6 @@
 slack:
   app_id: "A07NG1N5S9M"
   client_id: "7759248758566.7764056196327"
-  "
+noaa:
+  api_url: "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter"
+	station_id: "9414290"
