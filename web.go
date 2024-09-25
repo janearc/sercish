@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/sirupsen/logrus"
 	"net/http"
 )
 
@@ -19,7 +20,11 @@ func (s *Service) Start() error {
 	s.aboutHandler()
 	s.slackHandler()
 
-	http.ListenAndServe(fmt.Sprintf(":%d", s.config.Web.Port), nil)
+	if err := http.ListenAndServe(fmt.Sprintf(":%d", s.config.Web.Port), nil); err != nil {
+		logrus.WithError(err).Fatal("Server failed to start")
+	}
+
+	logrus.Infof("Listener started on port %d", s.config.Web.Port)
 
 	return nil
 }
@@ -48,18 +53,20 @@ func (s *Service) aboutHandler() {
 		</head>
 		<body>
 			<div class="container">
-				<h3>ATC</h3>
-				<p>ATC is a web application that helps athletes track their performance and progress in swimming, biking, and running.</p>
+				<h3>bitey</h3>
+				<p>bitey is an artificial harbor seal that supports the sercish slack.</p>
 				<p>author: Jane Arc</p>
 				<p>Build Version: %s</p>
 				<p>Build Date: %s</p>
-				<p>source: <a href="http://github.com/janearc/atc">http://github.com/janearc/atc</a></p>
+				<p>source: <a href="http://github.com/janearc/sercish">http://github.com/janearc/sercish</a></p>
 			</div>
 		</body>
 		</html>
-		`, s.Config.Build.Build, s.Config.Build.BuildDate)
+		`, s.config.Version.Build, s.config.Version.BuildDate)
 
-		w.Write([]byte(html))
+		if _, err := w.Write([]byte(html)); err != nil {
+			logrus.WithError(err).Warn("Error writing response: %v", err)
+		}
 	})
 
 	return

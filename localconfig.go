@@ -25,6 +25,11 @@ type Config struct {
 	Web struct {
 		Port int `yaml:"port"`
 	}
+	Version struct {
+		BuildDate string `yaml:"build_date"`
+		Build     string `yaml:"build"`
+		Branch    string `yaml:"branch"`
+	}
 }
 
 // let's just do some accessors because accessors are cool
