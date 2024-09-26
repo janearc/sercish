@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/janearc/sux/sux"
 	"github.com/sirupsen/logrus"
 	"github.com/slack-go/slack"
 	"net/http"
@@ -11,6 +12,8 @@ import (
 type Service struct {
 	config *Config
 	api    *slack.Client
+	sux    *sux.Sux
+	blob   json.RawMessage // you definitely don't want to know what this is
 }
 
 func NewService(config *Config) *Service {
@@ -26,6 +29,31 @@ func (s *Service) GetConfig() *Config {
 func (s *Service) Start() error {
 	logrus.Info("Starting service")
 
+	/*
+		api := slack.New(s.GetConfig().OAuthToken())
+		if api == nil {
+			logrus.Fatal("Failed to instantiate Slack API object")
+		}
+		if _, err := api.AuthTest(); err != nil {
+			logrus.WithError(err).Fatal("Failed to authenticate to Slack")
+		}
+
+		logrus.Info("Slack API object instantiated")
+
+		s.api = api
+	*/
+
+	// TODO: yep this is gross too but that's okay, this is just bitey
+	state := sux.NewSux(s.config.Sources.cfg, s.config.Sources.ver, s.config.Sources.sec)
+
+	if state == nil {
+		logrus.Fatal("Failed to instantiate Sux object")
+	} else {
+		logrus.Infof("UX is now stateful shades dot gif party parrot")
+	}
+
+	s.sux = state
+
 	// there's probably a better way to wrap these up but i don't feel like
 	// making bitey that complicated. we don't even have namespaces.
 	s.aboutHandler()
@@ -36,19 +64,8 @@ func (s *Service) Start() error {
 		logrus.WithError(err).Fatal("Server failed to start")
 	}
 
-	logrus.Infof("Listener started on port %d", s.config.Web.Port)
-
-	api := slack.New(s.GetConfig().OAuthToken())
-	if api == nil {
-		logrus.Fatal("Failed to instantiate Slack API object")
-	}
-	if _, err := api.AuthTest(); err != nil {
-		logrus.WithError(err).Fatal("Failed to authenticate to Slack")
-	}
-
-	logrus.Info("Slack API object instantiated")
-
-	s.api = api
+	// XXX: we don't arrive at this point, so everything has to happen above the
+	//      ListenAndServe call
 
 	return nil
 }
