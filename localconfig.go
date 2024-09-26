@@ -17,6 +17,7 @@ type Config struct {
 		clientId      string `yaml:"client_id"`
 		clientSecret  string `yaml:"client_secret"`
 		signingSecret string `yaml:"signing_secret"`
+		oauthToken    string `yaml:"oauth_token"`
 	}
 	NOAA struct {
 		apiURL    string `yaml:"api_url"`
@@ -48,6 +49,10 @@ func (c *Config) ClientSecret() string {
 
 func (c *Config) SigningSecret() string {
 	return c.Slack.signingSecret
+}
+
+func (c *Config) OAuthToken() string {
+	return c.Slack.oauthToken
 }
 
 func (c *Config) ApiURL() string {

@@ -3,15 +3,27 @@ package main
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
-	"github.com/slack-go/slack"
 	"io"
 	"log"
 	"net/http"
 )
 
-func fetchTideData() (string, error) {
-	url := fmt.Sprintf("%s?product=predictions&datum=MLLW&station=%s&time_zone=lst_ldt&units=english&interval=hilo&format=json", noaaAPIURL, stationID)
+// NOAA Response structure
+type TidePrediction struct {
+	Predictions []struct {
+		Time  string `json:"t"`
+		Type  string `json:"type"`
+		Value string `json:"v"`
+	} `json:"predictions"`
+}
+
+func (s *Service) fetchTideData() (string, error) {
+	url := fmt.Sprintf(
+		"%s?product=predictions&datum=MLLW&station=%s&time_zone=lst_ldt&units=english&interval=hilo&format=json",
+		s.config.NOAA.apiURL,
+		s.config.NOAA.stationID)
 	resp, err := http.Get(url)
 	if err != nil {
 		return "", err
@@ -43,11 +55,10 @@ func fetchTideData() (string, error) {
 	return message, nil
 }
 
-func sendTidesToSlack(message string) error {
-	api := slack.New(slackToken)
-	_, _, err := api.PostMessage(
-		channelID,
-		slack.MsgOptionText(message, false),
-	)
-	return err
+func (s *Service) sendTidesToSlack(message string) error {
+	//_, _, err := api.PostMessage(
+	//	channelID,
+	//	slack.MsgOptionText(message, false),
+	//)
+	return errors.New("Not implemented")
 }

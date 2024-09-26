@@ -3,17 +3,23 @@ package main
 import (
 	"fmt"
 	"github.com/sirupsen/logrus"
+	"github.com/slack-go/slack"
 	"net/http"
 )
 
 type Service struct {
 	config *Config
+	api    *slack.Client
 }
 
 func NewService(config *Config) *Service {
 	return &Service{
 		config: config,
 	}
+}
+
+func (s *Service) GetConfig() *Config {
+	return s.config
 }
 
 func (s *Service) Start() error {
@@ -25,6 +31,18 @@ func (s *Service) Start() error {
 	}
 
 	logrus.Infof("Listener started on port %d", s.config.Web.Port)
+
+	api := slack.New(s.GetConfig().OAuthToken())
+	if api == nil {
+		logrus.Fatal("Failed to instantiate Slack API object")
+	}
+	if _, err := api.AuthTest(); err != nil {
+		logrus.WithError(err).Fatal("Failed to authenticate to Slack")
+	}
+
+	logrus.Info("Slack API object instantiated")
+
+	s.api = api
 
 	return nil
 }

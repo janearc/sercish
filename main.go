@@ -25,13 +25,13 @@ func main() {
 	// so we have a healthy service object, let's start it
 	s.Start()
 
-	tideMessage, err := fetchTideData()
+	tideMessage, err := s.fetchTideData()
 	if err != nil {
-		fmt.Printf("Error fetching tide data: %v\n", err)
+		logrus.WithError(err).Warn("Error fetching tide data")
 		return
 	}
 
-	err = sendTidesToSlack(tideMessage)
+	err = s.sendTidesToSlack(tideMessage)
 	if err != nil {
 		fmt.Printf("Error sending message to Slack: %v\n", err)
 	} else {
