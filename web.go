@@ -13,6 +13,7 @@ type Service struct {
 	config *Config
 	api    *slack.Client
 	sux    *sux.Sux
+	blob   json.RawMessage // you definitely don't want to know what this is
 }
 
 func NewService(config *Config) *Service {
