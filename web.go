@@ -24,8 +24,13 @@ func (s *Service) GetConfig() *Config {
 }
 
 func (s *Service) Start() error {
+	logrus.Info("Starting service")
+
+	// there's probably a better way to wrap these up but i don't feel like
+	// making bitey that complicated. we don't even have namespaces.
 	s.aboutHandler()
 	s.slackHandler()
+	s.eventsHandler()
 
 	if err := http.ListenAndServe(fmt.Sprintf(":%d", s.config.Web.Port), nil); err != nil {
 		logrus.WithError(err).Fatal("Server failed to start")
@@ -74,6 +79,8 @@ func (s *Service) slackHandler() {
 
 		logrus.Infof("Received request: %v", r)
 	})
+
+	logrus.Info("handler: /slack")
 }
 
 // slack will tell us about assorted events, which maybe we care about
@@ -81,6 +88,7 @@ func (s *Service) eventsHandler() {
 	http.HandleFunc("/slack/event", func(w http.ResponseWriter, r *http.Request) {
 		logrus.Infof("Received event: %v", r)
 	})
+	logrus.Info("handler: /slack/event")
 }
 
 // returns information about the service
@@ -116,5 +124,6 @@ func (s *Service) aboutHandler() {
 		}
 	})
 
+	logrus.Info("handler: /about")
 	return
 }

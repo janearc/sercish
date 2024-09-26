@@ -5,4 +5,4 @@ noaa:
   api_url: "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter"
   station_id: "9414290"
 web:
-  port: 80
+  port: 8080

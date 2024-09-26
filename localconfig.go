@@ -4,7 +4,6 @@ import (
 	"github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v3"
 	"os"
-	"path/filepath"
 )
 
 // we're just gonna hamfist this and not make a separate package
@@ -67,15 +66,8 @@ func (c *Config) StationID() string {
 
 // LoadConfig smashes a bunch of yaml into a config object we'll need everywhere
 func LoadConfig(configFileName string, versionFileName string, secretsFileName string) (*Config, error) {
-	root := os.Getenv("BITEY_ROOT")
-	if root == "" {
-		logrus.Warn("BITEY_ROOT not defined")
-	}
-
 	if configFileName == "" {
 		configFileName = "/app/config/config.yml"
-	} else {
-		configFileName = filepath.Join(root, "config/config.yml")
 	}
 
 	file, err := os.Open(configFileName)
@@ -88,6 +80,7 @@ func LoadConfig(configFileName string, versionFileName string, secretsFileName s
 		if err != nil {
 			logrus.WithError(err).Fatalf("Failed to close config file %s", configFileName)
 		}
+		logrus.Infof("Parsed config file %s", configFileName)
 	}(file)
 
 	var config Config
@@ -101,8 +94,6 @@ func LoadConfig(configFileName string, versionFileName string, secretsFileName s
 	// same as above, but for the version file
 	if versionFileName == "" {
 		versionFileName = "/app/config/version.yml"
-	} else {
-		versionFileName = filepath.Join(root, "config/version.yml")
 	}
 	vf, err := os.Open(versionFileName)
 	if err != nil {
@@ -114,6 +105,7 @@ func LoadConfig(configFileName string, versionFileName string, secretsFileName s
 		if err != nil {
 			logrus.WithError(err).Fatalf("Failed to close version file %s", versionFileName)
 		}
+		logrus.Infof("Parsed version file %s", versionFileName)
 	}(vf)
 
 	// Decode the version file
@@ -125,8 +117,6 @@ func LoadConfig(configFileName string, versionFileName string, secretsFileName s
 
 	if secretsFileName == "" {
 		secretsFileName = "/app/config/secrets.yml"
-	} else {
-		secretsFileName = filepath.Join(root, "config/secrets.yml")
 	}
 
 	sf, err := os.Open(secretsFileName)
@@ -139,6 +129,7 @@ func LoadConfig(configFileName string, versionFileName string, secretsFileName s
 		if err != nil {
 			logrus.WithError(err).Fatalf("Failed to close secrets file %s", secretsFileName)
 		}
+		logrus.Infof("Parsed secrets file %s", secretsFileName)
 	}(sf)
 
 	secDecoder := yaml.NewDecoder(sf)

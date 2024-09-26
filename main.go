@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"github.com/sirupsen/logrus"
 )
 
@@ -22,8 +21,16 @@ func main() {
 		logrus.Fatalf("Failed to instantiate service object")
 	}
 
+	logrus.Info("Service object instantiated")
+
 	// so we have a healthy service object, let's start it
-	s.Start()
+	serr := s.Start()
+
+	if serr != nil {
+		logrus.WithError(serr).Fatalf("Failed to start service: %v", serr)
+	}
+
+	logrus.Info("Service started")
 
 	tideMessage, err := s.fetchTideData()
 	if err != nil {
@@ -33,8 +40,11 @@ func main() {
 
 	err = s.sendTidesToSlack(tideMessage)
 	if err != nil {
-		fmt.Printf("Error sending message to Slack: %v\n", err)
+		logrus.Warnf("Error sending message to Slack: %v\n", err)
 	} else {
-		fmt.Println("Tides successfully posted to Slack!")
+		logrus.Infof("Tides successfully posted to Slack!")
 	}
+
+	// TODO: does this mean we just fall out the bottom?
+	logrus.Fatal("Exiting main.go")
 }

@@ -26,6 +26,7 @@ ENV APP_ROOT=/app
 
 # Copy the built Go binary from the builder image
 COPY --from=builder /app .
+COPY --from=builder /app/config /app/config
 
 # Expose the application's port
 EXPOSE 8080
