@@ -30,6 +30,11 @@ type Config struct {
 		Build     string `yaml:"build"`
 		Branch    string `yaml:"branch"`
 	}
+	Sources struct {
+		cfg string
+		ver string
+		sec string
+	}
 }
 
 // let's just do some accessors because accessors are cool
@@ -137,6 +142,11 @@ func LoadConfig(configFileName string, versionFileName string, secretsFileName s
 		logrus.WithError(err).Fatalf("Failed to decode secrets file %s", secretsFileName)
 		return nil, err
 	}
+
+	// TODO: avert your eyes, this is ugly
+	config.Sources.cfg = configFileName
+	config.Sources.ver = versionFileName
+	config.Sources.sec = secretsFileName
 
 	logrus.Info("Chomp chomp")
 	return &config, nil

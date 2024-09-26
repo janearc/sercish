@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/janearc/sux/sux"
 	"github.com/sirupsen/logrus"
 	"github.com/slack-go/slack"
 	"net/http"
@@ -11,6 +12,7 @@ import (
 type Service struct {
 	config *Config
 	api    *slack.Client
+	sux    *sux.Sux
 }
 
 func NewService(config *Config) *Service {
@@ -50,6 +52,15 @@ func (s *Service) Start() error {
 
 	s.api = api
 
+	// TODO: yep this is gross too but that's okay, this is just bitey
+	sux := sux.NewSux(s.config.Sources.cfg, s.config.Sources.ver, s.config.Sources.sec)
+
+	if sux == nil {
+		logrus.Fatal("Failed to instantiate Sux object")
+	} else {
+		logrus.Infof("UX is now stateful shades dot gif party parrot")
+	}
+	
 	return nil
 }
 
