@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/sirupsen/logrus"
 	"github.com/slack-go/slack"
@@ -49,8 +50,36 @@ func (s *Service) Start() error {
 
 func (s *Service) slackHandler() {
 	http.HandleFunc("/slack", func(w http.ResponseWriter, r *http.Request) {
-		// TODO: "challenge" parameter
-		fmt.Fprintf(w, "Hello, Slack!")
+		// Parse the request body
+		var body map[string]interface{}
+		err := json.NewDecoder(r.Body).Decode(&body)
+		if err != nil {
+			http.Error(w, "Invalid request", http.StatusBadRequest)
+			logrus.Errorf("Failed to decode request body: %v", err)
+			return
+		}
+
+		// Check for the "challenge" parameter
+		if challenge, ok := body["challenge"].(string); ok {
+			w.Header().Set("Content-Type", "application/json")
+			response := map[string]string{"challenge": challenge}
+			if err := json.NewEncoder(w).Encode(response); err != nil {
+				http.Error(w, "Failed to encode response", http.StatusInternalServerError)
+				logrus.Errorf("Failed to encode challenge response: %v", err)
+				return
+			}
+			logrus.Infof("Responded to Slack challenge: %s", challenge)
+			return
+		}
+
+		logrus.Infof("Received request: %v", r)
+	})
+}
+
+// slack will tell us about assorted events, which maybe we care about
+func (s *Service) eventsHandler() {
+	http.HandleFunc("/slack/event", func(w http.ResponseWriter, r *http.Request) {
+		logrus.Infof("Received event: %v", r)
 	})
 }
 
