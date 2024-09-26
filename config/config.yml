@@ -6,3 +6,7 @@ noaa:
   station_id: "9414290"
 web:
   port: 8080
+aws:
+  region: "us-west-2"
+openai:
+  url: "https://api.openai.com/v1/chat/completions"

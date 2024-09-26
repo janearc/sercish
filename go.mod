@@ -3,7 +3,7 @@ module sercish
 go 1.23
 
 require (
-	github.com/janearc/sux v0.0.0-20240918203358-897788dfb915
+	github.com/janearc/sux v0.0.0-20240926202030-d2fdd0f2b0da
 	github.com/sirupsen/logrus v1.9.3
 	github.com/slack-go/slack v0.14.0
 	gopkg.in/yaml.v3 v3.0.1
